@@ -48,7 +48,7 @@ jobs:
 
   build-repository:
     runs-on: ubuntu-22.04
-    needs: [build-openwrt, build-entware]
+    needs: [build-entware]
 
     steps:
     - name: Checkout
@@ -70,21 +70,6 @@ jobs:
 
     - name: Build repository
       run: make repository
-
-    - name: Create openwrt keys
-      env:
-        OPENWRT_PUBLIC_KEY: ${{ secrets.OPENWRT_PUBLIC_KEY }}
-        OPENWRT_APK_PUBLIC_KEY: ${{ secrets.OPENWRT_APK_PUBLIC_KEY }}
-      run: |
-        echo "$OPENWRT_PUBLIC_KEY" > ./out/_pages/openwrt/nfqws-keenetic.pub
-        echo "$OPENWRT_APK_PUBLIC_KEY" > ./out/_pages/openwrt/nfqws-keenetic.pem
-
-    - name: Copy openwrt indexes
-      run: |
-        cp ./out/Packages ./out/_pages/openwrt/Packages
-        cp ./out/Packages.gz ./out/_pages/openwrt/Packages.gz
-        cp ./out/Packages.sig ./out/_pages/openwrt/Packages.sig
-        cp ./out/packages.adb ./out/_pages/openwrt/packages.adb
 
     - name: Upload pages artifact
       uses: actions/upload-pages-artifact@v3
@@ -184,56 +169,6 @@ jobs:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: ./out/entware/nfqws-keenetic_${{ steps.version.outputs.content }}_all_entware.ipk
         asset_name: nfqws-keenetic_${{ steps.version.outputs.content }}_all_entware.ipk
-        asset_content_type: application/octet-stream
-
-    - name: Upload Release openwrt ipk
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./out/openwrt/nfqws-keenetic_${{ steps.version.outputs.content }}_all.ipk
-        asset_name: nfqws-keenetic_${{ steps.version.outputs.content }}_all_openwrt.ipk
-        asset_content_type: application/octet-stream
-
-    - name: Upload Release openwrt apk
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./out/openwrt/nfqws-keenetic-${{ steps.version.outputs.content }}.apk
-        asset_name: nfqws-keenetic_${{ steps.version.outputs.content }}_all_openwrt.apk
-        asset_content_type: application/octet-stream
-
-    - name: Upload Release web-entware
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./out/entware/nfqws-keenetic-web_${{ steps.version.outputs.content }}_all_entware.ipk
-        asset_name: nfqws-keenetic-web_${{ steps.version.outputs.content }}_all_entware.ipk
-        asset_content_type: application/octet-stream
-
-    - name: Upload Release web-openwrt ipk
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./out/openwrt/nfqws-keenetic-web_${{ steps.version.outputs.content }}_all.ipk
-        asset_name: nfqws-keenetic-web_${{ steps.version.outputs.content }}_all_openwrt.ipk
-        asset_content_type: application/octet-stream
-
-    - name: Upload Release web-openwrt apk
-      uses: actions/upload-release-asset@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ./out/openwrt/nfqws-keenetic-web-${{ steps.version.outputs.content }}.apk
-        asset_name: nfqws-keenetic-web_${{ steps.version.outputs.content }}_all_openwrt.apk
         asset_content_type: application/octet-stream
 
     - name: Summary
